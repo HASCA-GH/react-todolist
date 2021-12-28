@@ -1,13 +1,36 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import styled from "styled-components";
-const TodoItem = () => {
+const TodoItem = ({todo, todos, setTodos}) => {
+
+  const [editedTodo, setEditedTodo] = useState(todo.title)
+
+  useEffect(() => {
+    setEditedTodo(todo.title)
+  }, [todo])
+  const deleteTask = ()=> {
+    console.log(todo.id, todo.title, '🔥' )
+
+    const currentTodoId = todo.id
+    setTodos(todos.filter(todo => todo.id !== currentTodoId))
+  } 
+
+const saveTodo = () => {
+  const currentTodoId = todo.id
+  setTodos(
+    todos.map(todo=> 
+      todo.id === currentTodoId ? {...todo, title:editedTodo} :todo)
+  )
+}
+
   return (
-    <TodoListItem>
-      <Checkbox className="far fa-circle" />
-      <input />
-      <SaveTodo className="fas fa-check" />
-      <DeleteTodo className="fas fa-trash-alt" />
-    </TodoListItem>
+        <TodoListItem  >
+          <Checkbox className="far fa-circle" />
+          <input  
+            value={editedTodo} 
+            onChange={e => setEditedTodo(e.target.value)}/>
+          <SaveTodo className="fas fa-check" onClick={saveTodo}/>
+          <DeleteTodo className="fas fa-trash-alt" onClick={deleteTask}/>
+        </TodoListItem>
   );
 };
 

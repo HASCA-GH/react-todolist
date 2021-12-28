@@ -1,8 +1,32 @@
-import React from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import TodoItem from "./TodoItem";
 
+// {
+//   id: 1,
+//   title: 'cleaning',
+//   completed: 'false'
+// }
+
 const TodoList = () => {
+  const [todo, setTodo] = useState('')
+  const [todos, setTodos] = useState([])
+ 
+  const addButtonHandler = ()=> {
+    // console.log('addButtonHandler clicked...BUD')
+    console.log(todo)
+    if (todo.length>0) {
+      setTodos([
+        {
+          id: todos.length,
+          title: todo,
+          completed: 'false'
+        }
+        , ...todos])
+      console.log(todos)
+      setTodo('')
+    }
+  }
   return (
     <Wrapper>
       <TodoCategoryHeader>
@@ -10,11 +34,13 @@ const TodoList = () => {
           <i className={"fas fa-user"} />
         </CategoryIcon>
         <Title>Personal</Title>
-        <TodoInput />
-        <AddTodo className="fas fa-plus" />
+        <TodoInput value={todo} onChange={e => setTodo(e.target.value)} />
+        <AddTodo className="fas fa-plus" onClick={addButtonHandler}  />
       </TodoCategoryHeader>
-      <TodoItem />
-    </Wrapper>
+      {todos.map((todo, index) => (
+        <TodoItem key={index} todo = {todo} todos={todos} setTodos={setTodos}/>
+      ))}
+      </Wrapper>
   );
 };
 
@@ -75,5 +101,3 @@ const AddTodo = styled.i`
     transition: 0.3s;
   }
 `;
-
-const TodoListItems = styled.div``;
