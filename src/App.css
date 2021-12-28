@@ -1,5 +1,4 @@
 body {
-  /* background-color: black;
-  color: whitesmoke; */
-  /* color: rgb(167, 161, 83) ; */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+  
 }
