@@ -9,7 +9,7 @@ import React, { useState } from 'react'
 
 
 function App() {
-  const [sideBarToggle, setsideBarToggle] = useState(true)
+  const [sideBarToggle, setSideBarToggle] = useState(true)
   const todoList = [
     {
       name: 'Personal',
@@ -30,7 +30,10 @@ function App() {
   return (
     <>
       <Wrapper>
-        <Header />
+        <Header 
+          sideBarToggle={sideBarToggle} 
+          setSideBarToggle={setSideBarToggle}
+        />
         <Main>
           <Sidebar sideBarToggle={sideBarToggle} todoList={todoList}/>
           <MainContent
@@ -41,9 +44,17 @@ function App() {
             <TodoContent>
               <Title>Dashboard</Title>
               <Greeting>Good morning, Humberto</Greeting>
-              {/* {[<h2>Cooking</h2>, <h2>reading</h2>]} */}
-              {/* <TodoItem /> */}
-              <TodoList />
+              {todoList.map(categoryx => 
+                <TodoList 
+                  key={categoryx.name}
+                  name={categoryx.name}
+                  color={categoryx.color}
+                  icon={categoryx.icon}
+                />
+                )}
+              
+              
+              
             </TodoContent>
           </MainContent>
         </Main>
@@ -70,7 +81,8 @@ const MainContent = styled.div`
   width: 100vw; 
   justify-content: center;
   transition: 0.3s;
-  background-color:green
+  /* background-color:gray */
+  background-color: rgb(50, 55, 65);
 `;
 
 const TodoContent = styled.div`

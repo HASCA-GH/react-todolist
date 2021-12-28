@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 // import avatar from "../asset/HAA-01.jpg";
-const Header = () => {
+const Header = ({sideBarToggle, setSideBarToggle} ) => {
   return (
     <Wrapper>
-      <HeaderItem>
+      <HeaderItem onClick={()=>setSideBarToggle(!sideBarToggle) }>
         <i className="fas fa-bars" />
       </HeaderItem>
 

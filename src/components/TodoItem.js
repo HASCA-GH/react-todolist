@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import styled from "styled-components";
-const TodoItem = ({todo, todos, setTodos}) => {
+const TodoItem = ({todo, todos, setTodos , color}) => {
 
   const [editedTodo, setEditedTodo] = useState(todo.title)
 
@@ -34,7 +34,8 @@ const completeTodo = () => {
         <TodoListItem  >
           <Checkbox 
             className={todo.completed ? "fas fa-check-circle" : "far fa-circle"} 
-            onClick={completeTodo}/>
+            onClick={completeTodo}
+            style={{color: color}}/>
           <input  
             style={{textDecoration: todo.completed ? 'line-through': 'none'}}
             value={editedTodo} 
