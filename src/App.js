@@ -4,14 +4,23 @@ import styled from "styled-components";
 // import Checkbox from "./components/TodoItem";
 // import TodoItem from "./components/TodoItem";
 import TodoList from "./components/TodoList";
+import Sidebar from "./components/Sidebar";
+import React, { useState } from 'react'
+
 
 function App() {
+  const [sideBarToggle, setsideBarToggle] = useState(true)
   return (
     <>
       <Wrapper>
         <Header />
         <Main>
-          <MainContent>
+          <Sidebar sideBarToggle={sideBarToggle}/>
+          <MainContent
+            style={{
+              width: `calc(100vw - (${sideBarToggle ? '300px' : '70px'}))`
+            }}
+          >
             <TodoContent>
               <Title>Dashboard</Title>
               <Greeting>Good morning, Humberto</Greeting>
@@ -41,9 +50,10 @@ const Main = styled.div`
 
 const MainContent = styled.div`
   display: flex;
-  width: 100vw;
+  width: 100vw; 
   justify-content: center;
   transition: 0.3s;
+  background-color:green
 `;
 
 const TodoContent = styled.div`

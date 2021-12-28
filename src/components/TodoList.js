@@ -20,7 +20,7 @@ const TodoList = () => {
         {
           id: todos.length,
           title: todo,
-          completed: 'false'
+          completed: false
         }
         , ...todos])
       console.log(todos)
