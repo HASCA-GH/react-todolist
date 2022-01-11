@@ -5,19 +5,19 @@ const Sidebar = ({sideBarToggle, todoList}) => {
     return (
         <Wrapper 
             style={{width: `${sideBarToggle ? '300px': '70px'}`}}>
-        <Title>
-            {sideBarToggle ? 'Collections' : 'C'}
-        </Title>
-        <Categorylist>
-            {todoList.map(category => (
-                <Category key={category.name}>
-                    <CategoryIcon style={{backgroundColor: category.color}}>
-                        <i className={category.icon}/>
-                    </CategoryIcon>
-                    {sideBarToggle && <span>{category.name}</span>}
-                </Category>
-            ))}
-        </Categorylist>
+            <Title>
+                {sideBarToggle ? 'Collections' : 'C'}
+            </Title>
+            <Categorylist>
+                {todoList.map(category => (
+                    <Category key={category.name}>
+                        <CategoryIcon style={{backgroundColor: category.color}}>
+                            <i className={category.icon}/>
+                        </CategoryIcon>
+                        {sideBarToggle && <span>{category.name}</span>}
+                    </Category>
+                ))}
+            </Categorylist>
         </Wrapper>
     )
 }

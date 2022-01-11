@@ -1,0 +1,1 @@
+This folder (Airtable-files) contains only the files developed for Airtable database access

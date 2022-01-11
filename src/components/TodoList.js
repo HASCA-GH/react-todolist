@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import TodoItem from "./TodoItem";
 import styled from "styled-components";
 
@@ -11,22 +11,75 @@ import styled from "styled-components";
 const TodoList = ({name, color, icon}) => {
   const [todo, setTodo] = useState('')
   const [todos, setTodos] = useState([])
- 
-  const addButtonHandler = ()=> {
-    // console.log('addButtonHandler clicked...BUD')
-    console.log(todo)
-    if (todo.length>0) {
-      setTodos([
-        {
-          id: todos.length,
-          title: todo,
-          completed: false
+
+
+  const baseUrl = `https://api.airtable.com/v0/appKtuPDRIuy8sZG1/${name}`
+
+  const getTodos = async () => {
+    try {
+      const todoData = await fetch(baseUrl, {
+        method: 'get',
+        headers: {
+          Authorization: 'Bearer keyizU2EzXNNPSDS9',
         }
-        , ...todos])
-      console.log(todos)
-      setTodo('')
+        
+      })
+
+      const todoJson = await todoData.json()
+      setTodos(todoJson.records)
+    } catch (error) {
+      console.log(error)
     }
   }
+
+  console.log(todos)
+
+  useEffect(() => {
+    getTodos()
+  }, [todo])
+
+  // before 
+  // const addButtonHandler = ()=> {
+  //   console.log(todo)
+  //   if (todo.length>0) {
+  //     setTodos([
+  //       {
+  //         id: todos.length,
+  //         title: todo,
+  //         completed: false
+  //       }
+  //       , ...todos])
+  //     console.log(todos)
+  //     setTodo('')
+  //   }
+  // }
+
+  const addButtonHandler = async () => {
+    try {
+      await fetch(baseUrl, {
+        method: 'post',
+        headers: {
+          Authorization: 'Bearer keyizU2EzXNNPSDS9',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          records: [
+            {
+              fields: {
+                title: todo,
+                completed: false
+              }
+            },
+          ]
+        }),
+      })
+
+      setTodo('')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <Wrapper>
       <TodoCategoryHeader>
@@ -41,9 +94,10 @@ const TodoList = ({name, color, icon}) => {
         <TodoItem 
           key={index} 
           todo = {todo} 
-          todos={todos} 
-          setTodos={setTodos}
           color={color}
+          baseUrl={baseUrl}
+          name={name}
+          getTodos={getTodos}
         />
       ))}
       </Wrapper>
