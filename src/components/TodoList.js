@@ -1,6 +1,9 @@
 import React, {useState, useEffect} from "react";
 import TodoItem from "./TodoItem";
 import styled from "styled-components";
+import {db} from '../firebase.js'
+import {collection, orderBy, onSnapshot, query, addDoc, serverTimestamp} from 'firebase/firestore'
+
 
 // {
 //   id: 1,
@@ -13,71 +16,85 @@ const TodoList = ({name, color, icon}) => {
   const [todos, setTodos] = useState([])
 
 
-  const baseUrl = `https://api.airtable.com/v0/appKtuPDRIuy8sZG1/${name}`
+  // const baseUrl = `https://api.airtable.com/v0/appKtuPDRIuy8sZG1/${name}`
 
-  const getTodos = async () => {
-    try {
-      const todoData = await fetch(baseUrl, {
-        method: 'get',
-        headers: {
-          Authorization: 'Bearer keyizU2EzXNNPSDS9',
-        }
-        
-      })
-
-      const todoJson = await todoData.json()
-      setTodos(todoJson.records)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  console.log(todos)
-
-  useEffect(() => {
-    getTodos()
-  }, [todo])
-
-  // before 
-  // const addButtonHandler = ()=> {
-  //   console.log(todo)
-  //   if (todo.length>0) {
-  //     setTodos([
-  //       {
-  //         id: todos.length,
-  //         title: todo,
-  //         completed: false
+  // const getTodos = async () => {
+  //   try {
+  //     const todoData = await fetch(baseUrl, {
+  //       method: 'get',
+  //       headers: {
+  //         Authorization: 'Bearer keyizU2EzXNNPSDS9',
   //       }
-  //       , ...todos])
-  //     console.log(todos)
-  //     setTodo('')
+        
+  //     })
+
+  //     const todoJson = await todoData.json()
+  //     setTodos(todoJson.records)
+  //   } catch (error) {
+  //     console.log(error)
   //   }
   // }
 
-  const addButtonHandler = async () => {
-    try {
-      await fetch(baseUrl, {
-        method: 'post',
-        headers: {
-          Authorization: 'Bearer keyizU2EzXNNPSDS9',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          records: [
-            {
-              fields: {
-                title: todo,
-                completed: false
-              }
-            },
-          ]
-        }),
-      })
+  console.log(todos)
 
-      setTodo('')
-    } catch (error) {
-      console.log(error)
-    }
+  // useEffect(() => {
+  //   getTodos()
+  // }, [todo])
+
+  useEffect(() => {
+    const todoListQuery = query(
+      collection(db, 'todoCategories', name, 'todos'),
+      orderBy('createdAt', 'desc'),
+    )
+    // create the listener unsub:
+    const unsub = onSnapshot(todoListQuery, querySnapshot => {
+    const todoItems = []
+
+    querySnapshot.forEach(doc => {
+      todoItems.push({
+        ...doc.data(),
+        id: doc.id,
+      })
+    })
+
+    setTodos(todoItems)
+    })
+    //detaching the listener in order to make the code more cleaner, so use return in the useEffect. This is the optional cleanup mechanism for effects
+    return unsub
+  }, [])
+
+   const addButtonHandler = async () => {
+    // try {
+    //   await fetch(baseUrl, {
+    //     method: 'post',
+    //     headers: {
+    //       Authorization: 'Bearer keyizU2EzXNNPSDS9',
+    //       'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //       records: [
+    //         {
+    //           fields: {
+    //             title: todo,
+    //             completed: false
+    //           }
+    //         },
+    //       ]
+    //     }),
+    //   })
+
+    //   setTodo('')
+    // } catch (error) {
+    //   console.log(error)
+    // }
+    const collectionRef = collection(db, 'todoCategories', name, 'todos')
+    await addDoc(collectionRef, {
+      title: todo,
+      completed: false,
+      createdAt: serverTimestamp(),
+    })
+
+    setTodo('')
   }
 
   return (
@@ -95,9 +112,10 @@ const TodoList = ({name, color, icon}) => {
           key={index} 
           todo = {todo} 
           color={color}
-          baseUrl={baseUrl}
-          name={name}
-          getTodos={getTodos}
+          name = {name}
+          // baseUrl={baseUrl}
+          // name={name}
+          // getTodos={getTodos}
         />
       ))}
       </Wrapper>

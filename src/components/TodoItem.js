@@ -1,79 +1,92 @@
 import React, {useState, useEffect} from "react";
 import styled from "styled-components";
-const TodoItem = ({todo, color, baseUrl, name, getTodos}) => {
+import {db} from '../firebase'
+import {doc, updateDoc, deleteDoc} from 'firebase/firestore'
 
-  const [editedTodo, setEditedTodo] = useState(todo.fields.title)
+const TodoItem = ({todo, color, name}) => {
+
+  const [editedTodo, setEditedTodo] = useState(todo.title)
 
   useEffect(() => {
-    setEditedTodo(todo.fields.title)
+    setEditedTodo(todo.title)
   }, [todo])
 
+const docRef = doc(db, 'todoCategories', name, 'todos', todo.id)
+
+
 const deleteTask = async () => {
-  try {
-    await fetch(`${baseUrl}/${todo.id}`, {
-      method: 'delete',
-      headers: {
-        Authorization: 'Bearer keyizU2EzXNNPSDS9',
-      }, 
-    })
-    getTodos()
-  } catch (error) {
-    console.log(error)
-  }
+  // try {
+  //   await fetch(`${baseUrl}/${todo.id}`, {
+  //     method: 'delete',
+  //     headers: {
+  //       Authorization: 'Bearer keyizU2EzXNNPSDS9',
+  //     }, 
+  //   })
+  //   getTodos()
+  // } catch (error) {
+  //   console.log(error)
+  // }
+  await deleteDoc(docRef) 
 }
 
 const saveTodo = async () => {
-  try {
-    await fetch(`${baseUrl}/${todo.id}`, {
-      method: 'put',
-      headers: {
-        Authorization: 'Bearer keyizU2EzXNNPSDS9',
-        'Content-Type': 'application/json',
-      }, 
-      body: JSON.stringify({
-        fields: {
-          title: editedTodo, 
-          completed: todo.fields.completed,
-        },
-      })
-    })
-    getTodos()
-  } catch (error) {
-    console.log(error)
-  }
+  // try {
+  //   await fetch(`${baseUrl}/${todo.id}`, {
+  //     method: 'put',
+  //     headers: {
+  //       Authorization: 'Bearer keyizU2EzXNNPSDS9',
+  //       'Content-Type': 'application/json',
+  //     }, 
+  //     body: JSON.stringify({
+  //       fields: {
+  //         title: editedTodo, 
+  //         completed: todo.fields.completed,
+  //       },
+  //     })
+  //   })
+  //   getTodos()
+  // } catch (error) {
+  //   console.log(error)
+  // }
+  await updateDoc(docRef, {
+    title: editedTodo,
+  })
 }
 const completeTodo = async () => {
-  try {
-    await fetch(`${baseUrl}/${todo.id}`, {
-      method: 'put',
-      headers: {
-        Authorization: 'Bearer keyizU2EzXNNPSDS9',
-        'Content-Type': 'application/json',
-      }, 
-      body: JSON.stringify({
-        fields: {
-          title: todo.fields.title, 
-          completed: !todo.fields.completed, //if true >> false, if false >> true
-        },
-      })
-    })
-    getTodos()
-  } catch (error) {
-    console.log(error)
-  }
+  // try {
+  //   await fetch(`${baseUrl}/${todo.id}`, {
+  //     method: 'put',
+  //     headers: {
+  //       Authorization: 'Bearer keyizU2EzXNNPSDS9',
+  //       'Content-Type': 'application/json',
+  //     }, 
+  //     body: JSON.stringify({
+  //       fields: {
+  //         title: todo.fields.title, 
+  //         completed: !todo.fields.completed, //if true >> false, if false >> true
+  //       },
+  //     })
+  //   })
+  //   getTodos()
+  // } catch (error) {
+  //   console.log(error)
+  // }
+  await updateDoc(docRef, {
+    completed: !todo.completed,
+  })
 }
 
   return (
         <TodoListItem  >
           <Checkbox 
-            className={todo.fields.completed ? "fas fa-check-circle" : "far fa-circle"} 
+            className={todo.completed ? "fas fa-check-circle" : "far fa-circle"} 
             onClick={completeTodo}
             style={{color: color}}/>
           <input  
-            style={{textDecoration: todo.fields.completed ? 'line-through': 'none'}}
+            style={{textDecoration: todo.completed ? 'line-through': 'none'}}
             value={editedTodo} 
             onChange={e => setEditedTodo(e.target.value)}/>
-          {todo.fields.title !== editedTodo && (
+          {todo.title !== editedTodo && (
             <SaveTodo className="fas fa-check" onClick={saveTodo}/>
           )}
        
